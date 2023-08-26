@@ -25,7 +25,7 @@ with open("data/matches.json", encoding="utf8") as f:
 
 @app.get("/")
 def status() -> Response:
-    return Response("Football server is alive")
+    return Response("Football server is alive...")
 
 
 @app.get("/matches", response_model=list[Match])
