@@ -1,0 +1,17 @@
+[
+    {
+        "game_id": 1,
+        "home": "Everton",
+        "away": "Fulham"
+    },
+    {
+        "game_id": 2,
+        "home": "Fulham",
+        "away": "Brentford"
+    },
+    {
+        "game_id": 3,
+        "home": "Arsenal",
+        "away": "Fulham"
+    }
+]
