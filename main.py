@@ -25,11 +25,11 @@ with open("data/matches.json", encoding="utf8") as f:
 
 @app.get("/")
 def status() -> Response:
-    return Response("Football server is alive  ")
+    return Response("Football server is alive")
 
 
-@app.get("/all_matches", response_model=list[Match])
-def get_all__matches() -> list[Match]:
+@app.get("/matches", response_model=list[Match])
+def get_matches() -> list[Match]:
     return list(matches.values())
 
 
@@ -38,3 +38,4 @@ def get_match(game_id: int) -> Match:
     if game_id not in matches:
         raise HTTPException(status_code=494, detail="Unknown match {id}")
     return matches[game_id]
+
