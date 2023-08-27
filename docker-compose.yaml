@@ -8,3 +8,14 @@ services:
     volumes:
       - .:/app
 
+  db:
+    image: postgres
+    container_name: pgsql-dev
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: guest
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+

@@ -1,26 +1,23 @@
-import json
-from dataclasses import dataclass
-from fastapi import FastAPI, HTTPException, Response
+import functools
+from typing import Any
+
+import yaml
+from fastapi import FastAPI, Response
+
+from api import football
 
 app = FastAPI()
 
 
-@dataclass
-class Match:
-    game_id: int
-    home: str
-    away: str
+def load_settings() -> dict[Any, Any]:
+    with open('settings.yaml') as file:
+        return yaml.safe_load(file)
 
 
-matches: dict[int, Match] = {}
-
-with open("data/matches.json", encoding="utf8") as f:
-    data = json.load(f)
-    for d in data:
-        match = Match(**d)
-        matches[match.game_id] = match
-
-    print(f'Loaded {len(matches)} matches')
+@functools.cache
+def football_api() -> football.FootballAPI:
+    settings = load_settings()
+    return football.FootballAPI(settings['pgsql-dev'])
 
 
 @app.get("/")
@@ -28,14 +25,11 @@ def status() -> Response:
     return Response("Football server is alive...")
 
 
-@app.get("/matches", response_model=list[Match])
-def get_matches() -> list[Match]:
-    return list(matches.values())
+@app.get("/matches", response_model=list[football.Match])
+def get_matches() -> list[football.Match]:
+    return football_api().get_matches()
 
 
-@app.get("/match/{game_id}", response_model=Match)
-def get_match(game_id: int) -> Match:
-    if game_id not in matches:
-        raise HTTPException(status_code=494, detail="Unknown match {id}")
-    return matches[game_id]
-
+@app.get("/teams", response_model=list[football.Team])
+def get_teams() -> list[football.Team]:
+    return football_api().get_teams()

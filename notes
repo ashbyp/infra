@@ -1,3 +1,5 @@
+FASTAPI
+=======================================================================
 Local
 -----
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
@@ -6,7 +8,21 @@ Docker
 ------
 docker build -t football1 .
 docker run -d -p 8080:80 football1
-docker-compose up --build   # volume mapping not working
+docker-compose up --build
 
 https://www.youtube.com/watch?v=zkMRWDQV4Tg&t=1147s
 https://github.com/arjancodes
+
+
+POSTGRES
+=========================================================================
+
+# runs image no volume mapping
+docker run --name pgsql-dev -d -e POSTGRES_PASSWORD=guest -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres
+
+# BUT - always run with docker-compose up --build    [or using services in pycharm]
+
+# connect to running image
+docker exec -it pgsql-dev bash
+    psql -h localhost -U postgres               # postgres super user
+    psql -h localhost -U guest -d football      # app user

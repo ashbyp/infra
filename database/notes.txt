@@ -1,0 +1,12 @@
+\c database     # change database
+\du             # list users of current database
+\conninfo       # connection info
+
+
+
+
+
+
+
+
+select h.name, a.name from matches m join teams h on h.id = m.home_team_fk join teams a on a.id = m.away_team_fk

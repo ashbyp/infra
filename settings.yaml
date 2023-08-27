@@ -1,0 +1,8 @@
+pgsql-dev:
+  database: football
+  user: guest
+  password: guest
+  host: db    # service from docker compose, needs to be local host when running locally
+  port: 5432
+
+
