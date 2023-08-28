@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Status</title>
+    <link href="{{ url_for('static', path='/table.css') }}" rel="stylesheet">
+</head>
+<body>
+<table class="styled-table">
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>pid</td>
+        <td>{{pid}}</td>
+    </tr>
+    <tr>
+        <td>process name</td>
+        <td>{{process_name}}</td>
+    </tr>
+    <tr>
+        <td>hostname</td>
+        <td>{{hostname}}</td>
+    </tr>
+    <tr>
+        <td>ip address</td>
+        <td>{{ip_address}}</td>
+    </tr>
+    <tr>
+        <td>platform system</td>
+        <td>{{platform_system}}</td>
+    </tr>
+    <tr>
+        <td>platform release</td>
+        <td>{{platform_release}}</td>
+    </tr>
+    <tr>
+        <td>platform version</td>
+        <td>{{platform_version}}</td>
+    </tr>
+    <tr>
+        <td>platform</td>
+        <td>{{platform}}</td>
+    </tr>
+    <tr>
+        <td>cpu percent</td>
+        <td>{{cpu_percent}}</td>
+    </tr>
+    <tr>
+        <td>cpu time</td>
+        <td>{{cpu_time}}</td>
+    </tr>
+     <tr>
+        <td>virtual memory</td>
+        <td>{{virtual_memory}}</td>
+    </tr>
+</table>
+</body>
+</html>

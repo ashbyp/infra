@@ -8,6 +8,10 @@ INSERT INTO teams(name, town) VALUES('Manchester City', 'Manchester');
 INSERT INTO teams(name, town) VALUES('Luton', 'Luton');
 INSERT INTO teams(name, town) VALUES('Everton', 'Liverpool');
 INSERT INTO teams(name, town) VALUES('Brentford', 'London');
+INSERT INTO teams(name, town) VALUES('Crystal Palace', 'London');
+INSERT INTO teams(name, town) VALUES('Chelsea', 'London');
+INSERT INTO teams(name, town) VALUES('Sheffield United', 'Sheffield');
+INSERT INTO teams(name, town) VALUES('Tottenham', 'London');
 
 
 INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(

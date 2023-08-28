@@ -5,6 +5,8 @@ from datetime import datetime
 import psycopg2
 import psycopg2.extras
 
+from api.API import API
+
 
 @dataclass
 class Team:
@@ -19,9 +21,10 @@ class Match:
     fixture: datetime
 
 
-class FootballAPI:
+class FootballAPI(API):
 
     def __init__(self, db_config: dict[Any, Any]) -> None:
+        super().__init__()
         self._con = psycopg2.connect(
             database=db_config['database'],
             user=db_config['user'],
@@ -35,6 +38,7 @@ class FootballAPI:
         cur.execute("select name, town from teams")
         results = [Team(**r) for r in cur.fetchall()]
         cur.close()
+        super().called()
         return results
 
     def get_matches(self) -> list[Match]:
@@ -51,6 +55,7 @@ class FootballAPI:
 
         results = [Match(**r) for r in cur.fetchall()]
         cur.close()
+        super().called()
         return results
 
 

@@ -4,3 +4,5 @@ uvicorn
 watchfiles
 psycopg2
 pyyaml
+psutil
+jinja2

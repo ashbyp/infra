@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matches</title>
+    <link href="{{ url_for('static', path='/table.css') }}" rel="stylesheet">
+</head>
+<body>
+<table class="styled-table">
+    <tr>
+        <th>Team</th>
+        <th>Town</th>
+    </tr>
+    {% for match in matches %}
+    <tr>
+        <td>{{match.home_team}}</td>
+        <td>{{match.away_team}}</td>
+        <td>{{match.fixture}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
