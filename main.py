@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from api import football, system
+from api.API import API
 
 #########################
 # Startup
@@ -18,6 +19,7 @@ from api import football, system
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="site/static"), name="static")
 templates = Jinja2Templates(directory="site/templates")
+apis = []
 
 
 #########################
@@ -29,15 +31,23 @@ def load_settings() -> dict[Any, Any]:
         return yaml.safe_load(file)
 
 
+def register_api(api: API) -> None:
+    apis.append(api)
+
+
 @functools.cache
 def football_api() -> football.FootballAPI:
     settings = load_settings()
-    return football.FootballAPI(settings['pgsql-dev'])
+    api = football.FootballAPI(settings['pgsql-dev'])
+    register_api(api)
+    return api
 
 
 @functools.cache
 def system_api() -> system.SystemAPI:
-    return system.SystemAPI()
+    api = system.SystemAPI()
+    register_api(api)
+    return api
 
 
 #########################
@@ -62,6 +72,7 @@ def ping() -> Response:
 def get_status(request: Request) -> Response:
     status = system_api().get_status()
     status['request'] = request
+    status['apis'] = [str(api) for api in apis]
     return templates.TemplateResponse("status.html", status)
 
 
