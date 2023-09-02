@@ -58,6 +58,19 @@ class FootballAPI(API):
         super().called()
         return results
 
+    def create_team(self, team: Team) -> str:
+        cur = self._con.cursor()
+        try:
+            cur.execute(f"insert into teams(name, town) values('{team.name}','{team.town}')")
+            self._con.commit()
+        except Exception as _:
+            return f'failed to add team {team}'
+        finally:
+            cur.close()
+            self._con.rollback()
+            super().called()
+        return f'added team {team}'
+
 
 if __name__ == '__main__':
     import yaml

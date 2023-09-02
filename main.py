@@ -2,11 +2,11 @@ import datetime
 import functools
 import yaml
 
-from typing import Any
+from typing import Any, Annotated
 from dataclasses import asdict
 
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Response, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -105,3 +105,10 @@ def get_teams() -> list[football.Team]:
 @app.get("/data/matches", response_model=list[football.Match])
 def get_matches() -> list[football.Match]:
     return football_api().get_matches()
+
+
+@app.post("/create-team/")
+def create_team(team: Annotated[str, Form()], town: Annotated[str, Form()]) -> RedirectResponse:
+    message = football_api().create_team(football.Team(team, town))
+    return RedirectResponse(url='/teams', status_code=302, headers={'message': message})
+

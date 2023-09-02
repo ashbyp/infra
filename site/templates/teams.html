@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Teams</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="{{ url_for('static', path='/table.css') }}" rel="stylesheet">
+
 </head>
 <body>
+<h1>Enter a team</h1>
+
+<form method="post" action="/create-team">
+    <label for="team">Team name:</label><br>
+    <input type="text" id="team" name="team"><br><br>
+    <label for="town">Town name:</label><br>
+    <input type="text" id="town" name="town"><br><br>
+    <input class="submit" type="submit" value="Submit">
+</form>
+<hr>
+<h3>Status: {{message if message else "OK"}}</h3>
+<hr>
+<h3>Current teams</h3>
 <table class="styled-table">
     <tr>
         <th>Team</th>

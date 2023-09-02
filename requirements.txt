@@ -6,3 +6,4 @@ psycopg2
 pyyaml
 psutil
 jinja2
+python-multipart
