@@ -41,6 +41,14 @@ class FootballAPI(API):
         super().called()
         return results
 
+    def get_team(self, name: str) -> Team:
+        cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(f"select name, town from teams where name = '{name}'")
+        results = [Team(**r) for r in cur.fetchall()]
+        cur.close()
+        super().called()
+        return results[0] if results else None
+
     def get_matches(self) -> list[Match]:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
@@ -70,6 +78,26 @@ class FootballAPI(API):
             self._con.rollback()
             super().called()
         return f'added team {team}'
+
+    def update_team(self, team: Team) -> str:
+        cur = self._con.cursor()
+        try:
+            cur.execute(f"update teams set town = '{team.town}' where name = '{team.name}'");
+            self._con.commit()
+        except Exception as _:
+            return f'failed to update team {team}'
+        finally:
+            cur.close()
+            self._con.rollback()
+            super().called()
+        return f'updated team {team}'
+
+    def create_or_update_team(self, team: Team) -> str:
+        existing = self.get_team(team.name)
+        if existing:
+            return self.update_team(team)
+        else:
+            return self.create_team(team)
 
 
 if __name__ == '__main__':

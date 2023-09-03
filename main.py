@@ -80,16 +80,12 @@ def get_status(request: Request) -> Response:
 # Football Endpoints
 #########################
 @app.get("/teams", response_class=HTMLResponse)
-def get_teams(request: Request) -> Response:
-    data = {
-        'request': request,
-        'teams': [asdict(t) for t in football_api().get_teams()]
-    }
-    return templates.TemplateResponse('teams.html', data)
+def teams(request: Request) -> Response:
+    return _render_teams_page(request, message="OK")
 
 
 @app.get("/matches", response_class=HTMLResponse)
-def get_matches(request: Request) -> Response:
+def matches(request: Request) -> Response:
     data = {
         'request': request,
         'matches': [asdict(t) for t in football_api().get_matches()]
@@ -98,17 +94,30 @@ def get_matches(request: Request) -> Response:
 
 
 @app.get("/data/teams", response_model=list[football.Team])
-def get_teams() -> list[football.Team]:
+def data_teams(request: Request, ) -> list[football.Team]:
     return football_api().get_teams()
 
 
 @app.get("/data/matches", response_model=list[football.Match])
-def get_matches() -> list[football.Match]:
+def data_matches(request: Request, ) -> list[football.Match]:
     return football_api().get_matches()
 
 
-@app.post("/create-team/")
-def create_team(team: Annotated[str, Form()], town: Annotated[str, Form()]) -> RedirectResponse:
-    message = football_api().create_team(football.Team(team, town))
-    return RedirectResponse(url='/teams', status_code=302, headers={'message': message})
+@app.post("/create-team/", response_class=HTMLResponse)
+def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[str, Form()]) -> Response:
+    if not team or not town:
+        message = "Missing team or town, please try again"
+    else:
+        message = football_api().create_or_update_team(football.Team(team, town))
+    return _render_teams_page(request, message)
+
+
+def _render_teams_page(request: Request, message: str) -> Response:
+    data = {
+        'request': request,
+        'message': message,
+        'teams': [asdict(t) for t in football_api().get_teams()]
+    }
+    return templates.TemplateResponse('teams.html', data)
+
 
