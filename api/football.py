@@ -33,6 +33,14 @@ class FootballAPI(API):
             port=db_config['port']
         )
 
+    def ping(self) -> str:
+        cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute("select 'hello' as test")
+        results = cur.fetchall()
+        cur.close()
+        super().called()
+        return 'OK'
+
     def get_teams(self) -> list[Team]:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute("select name, town from teams")
@@ -110,3 +118,4 @@ if __name__ == '__main__':
     a = FootballAPI(s['pgsql-dev'])
     # print(a.get_teams())
     print(a.get_matches())
+

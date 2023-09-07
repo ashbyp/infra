@@ -5,4 +5,7 @@ pgsql-dev:
   host: db    # service from docker compose, needs to be local host when running locally
   port: 5432
 
+redis-dev:
+  host: redis
+  port: 6379
 

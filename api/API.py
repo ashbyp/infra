@@ -15,5 +15,8 @@ class API:
     def name(self) -> str:
         return self.__class__.__name__
 
+    def ping(self) -> str:
+        raise NotImplemented(self.name())
+
     def __str__(self):
         return f'{self.name()} has been called {self.num_calls()} times'

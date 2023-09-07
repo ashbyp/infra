@@ -6,11 +6,11 @@ from typing import Any, Annotated
 from dataclasses import asdict
 
 from fastapi import FastAPI, Request, Response, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from api import football, system
+from api import football, system, stash
 from api.API import API
 
 #########################
@@ -42,6 +42,13 @@ def football_api() -> football.FootballAPI:
     register_api(api)
     return api
 
+@functools.cache
+def inmem_api() -> stash.StashAPI:
+    settings = load_settings()
+    api = stash.StashAPI(settings['redis-dev'])
+    register_api(api)
+    return api
+
 
 @functools.cache
 def system_api() -> system.SystemAPI:
@@ -65,7 +72,9 @@ def home(request: Request) -> Response:
 
 @app.get("/ping")
 def ping() -> Response:
-    return Response(f'API server is alive: {datetime.datetime.now()}')
+    apis = [(a.name(), a.ping()) for a in (system_api(), football_api(), inmem_api())]
+    res = f'API server is alive: {datetime.datetime.now()}\n{apis}'
+    return Response(res)
 
 
 @app.get("/status", response_class=HTMLResponse)
@@ -94,18 +103,18 @@ def matches(request: Request) -> Response:
 
 
 @app.get("/data/teams", response_model=list[football.Team])
-def data_teams(request: Request, ) -> list[football.Team]:
+def data_teams(_request: Request) -> list[football.Team]:
     return football_api().get_teams()
 
 
 @app.get("/data/matches", response_model=list[football.Match])
-def data_matches(request: Request, ) -> list[football.Match]:
+def data_matches(_request: Request) -> list[football.Match]:
     return football_api().get_matches()
 
 
 @app.post("/create-team/", response_class=HTMLResponse)
 def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[str, Form()]) -> Response:
-    if not team or not town:
+    if not (team and town):
         message = "Missing team or town, please try again"
     else:
         message = football_api().create_or_update_team(football.Team(team, town))
@@ -119,5 +128,3 @@ def _render_teams_page(request: Request, message: str) -> Response:
         'teams': [asdict(t) for t in football_api().get_teams()]
     }
     return templates.TemplateResponse('teams.html', data)
-
-

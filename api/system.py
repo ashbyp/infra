@@ -24,3 +24,8 @@ class SystemAPI(API):
         }
         super().called()
         return status
+
+    def ping(self) -> str:
+        super().called()
+        return f'pid: {os.getpid()}'
+
