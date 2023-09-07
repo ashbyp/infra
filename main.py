@@ -43,7 +43,7 @@ def football_api() -> football.FootballAPI:
     return api
 
 @functools.cache
-def inmem_api() -> stash.StashAPI:
+def stash_api() -> stash.StashAPI:
     settings = load_settings()
     api = stash.StashAPI(settings['redis-dev'])
     register_api(api)
@@ -72,7 +72,7 @@ def home(request: Request) -> Response:
 
 @app.get("/ping")
 def ping() -> Response:
-    apis = [(a.name(), a.ping()) for a in (system_api(), football_api(), inmem_api())]
+    apis = [(a.name(), a.ping()) for a in (system_api(), football_api(), stash_api())]
     res = f'API server is alive: {datetime.datetime.now()}\n{apis}'
     return Response(res)
 
