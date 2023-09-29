@@ -6,7 +6,7 @@ from typing import Any, Annotated
 from dataclasses import asdict
 
 from fastapi import FastAPI, Request, Response, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -128,7 +128,7 @@ def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[
     return _render_teams_page(request, message)
 
 
-@app.get("/delete-team/{name}") #, response_model=HTMLResponse)
+@app.get("/delete-team/{name}", response_class=HTMLResponse)
 def delete_team(request: Request, name: str) -> Response:
     message = football_api().delete_team(name)
     return _render_teams_page(request, message)
