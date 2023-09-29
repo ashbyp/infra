@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS team (
     website VARCHAR(256) NULL,
     createddttm TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
+CREATE UNIQUE INDEX idx_unique_name ON team (name);
 
 
 CREATE TABLE IF NOT EXISTS fixture (

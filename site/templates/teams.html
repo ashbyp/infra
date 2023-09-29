@@ -27,18 +27,22 @@
         <th>Team</th>
         <th>Town</th>
         <th>Website</th>
+        <th></th>
     </tr>
     {% for team in teams %}
     <tr>
         <td>{{team.name}}</td>
         <td>{{team.town}}</td>
         {% if team.website %}
-            <td><a href="{{team.website}}">{{team.website}}</a></td>
+        <td><a href="{{team.website}}">{{team.website}}</a></td>
         {% else %}
-            <td>Not set</td>
+        <td>Not set</td>
         {% endif %}
+        <td>
+            <button onclick="location.href='/delete-team/{{team.name}}'" type="button">Delete</button>
+        </td>
+        {% endfor %}
     </tr>
-    {% endfor %}
 </table>
 </form>
 </body>

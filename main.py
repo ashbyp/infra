@@ -128,6 +128,12 @@ def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[
     return _render_teams_page(request, message)
 
 
+@app.get("/delete-team/{name}") #, response_model=HTMLResponse)
+def delete_team(request: Request, name: str) -> Response:
+    message = football_api().delete_team(name)
+    return _render_teams_page(request, message)
+
+
 def _render_teams_page(request: Request, message: str) -> Response:
     data = {
         'request': request,

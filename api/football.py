@@ -58,6 +58,19 @@ class FootballAPI(API):
         super().called()
         return results[0] if results else None
 
+    def delete_team(self, name: str) -> str:
+        cur = self._con.cursor()
+        try:
+            cur.execute("delete from team where name = %s", (name,))
+            self._con.commit()
+        except Exception as e:
+            self._con.rollback()
+            return f'failed to delete team {name} {e}'
+        finally:
+            cur.close()
+            super().called()
+        return f'deleted team {name}'
+
     def get_fixtures(self) -> list[Fixture]:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
@@ -78,7 +91,8 @@ class FootballAPI(API):
     def create_team(self, team: Team) -> str:
         cur = self._con.cursor()
         try:
-            cur.execute(f"insert into team(name, town, website) values('{team.name}','{team.town}', '{team.website if team.website is not None else 'null'}')")
+            cur.execute("INSERT INTO team(name, town, website) VALUES (%s, %s, %s)",
+                        (team.name, team.town, team.website))
             self._con.commit()
         except Exception as e:
             self._con.rollback()
@@ -91,7 +105,8 @@ class FootballAPI(API):
     def update_team(self, team: Team) -> str:
         cur = self._con.cursor()
         try:
-            cur.execute(f"update team set town = '{team.town}', website = '{team.website}' where name = '{team.name}'")
+            cur.execute(f"update team set town = %s, website = %s where name = %s",
+                        (team.town, team.website, team.name))
             self._con.commit()
         except Exception as e:
             self._con.rollback()
