@@ -6,7 +6,7 @@ from typing import Any, Annotated
 from dataclasses import asdict
 
 from fastapi import FastAPI, Request, Response, Form
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -41,6 +41,7 @@ def football_api() -> football.FootballAPI:
     api = football.FootballAPI(settings['pgsql-dev'])
     register_api(api)
     return api
+
 
 @functools.cache
 def stash_api() -> stash.StashAPI:
@@ -93,13 +94,13 @@ def teams(request: Request) -> Response:
     return _render_teams_page(request, message="OK")
 
 
-@app.get("/matches", response_class=HTMLResponse)
-def matches(request: Request) -> Response:
+@app.get("/fixtures", response_class=HTMLResponse)
+def fixtures(request: Request) -> Response:
     data = {
         'request': request,
-        'matches': [asdict(t) for t in football_api().get_matches()]
+        'fixtures': [asdict(t) for t in football_api().get_fixtures()]
     }
-    return templates.TemplateResponse('matches.html', data)
+    return templates.TemplateResponse('fixtures.html', data)
 
 
 @app.get("/data/teams", response_model=list[football.Team])
@@ -107,17 +108,23 @@ def data_teams(_request: Request) -> list[football.Team]:
     return football_api().get_teams()
 
 
-@app.get("/data/matches", response_model=list[football.Match])
-def data_matches(_request: Request) -> list[football.Match]:
-    return football_api().get_matches()
+@app.get("/data/team/{name}", response_model=football.Team)
+def data_team(_request: Request, name: str) -> football.Team:
+    return football_api().get_team(name)
+
+
+@app.get("/data/matches", response_model=list[football.Fixture])
+def data_fixtures(_request: Request) -> list[football.Fixture]:
+    return football_api().get_fixtures()
 
 
 @app.post("/create-team/", response_class=HTMLResponse)
-def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[str, Form()]) -> Response:
-    if not (team and town):
-        message = "Missing team or town, please try again"
+def create_team(request: Request, team: Annotated[str, Form()], town: Annotated[str, Form()],
+                website: Annotated[str, Form()] = None) -> Response:
+    if not team or not town:
+        message = "Missing team / town, please try again"
     else:
-        message = football_api().create_or_update_team(football.Team(team, town))
+        message = football_api().create_or_update_team(football.Team(team, town, website))
     return _render_teams_page(request, message)
 
 

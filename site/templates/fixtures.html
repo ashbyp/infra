@@ -11,12 +11,13 @@
     <tr>
         <th>Home</th>
         <th>Away</th>
+        <th>Fixture</th>
     </tr>
-    {% for match in matches %}
+    {% for fixture in fixtures %}
     <tr>
-        <td>{{match.home_team}}</td>
-        <td>{{match.away_team}}</td>
-        <td>{{match.fixture}}</td>
+        <td>{{fixture.home_team}}</td>
+        <td>{{fixture.away_team}}</td>
+        <td>{{fixture.dttm}}</td>
     </tr>
     {% endfor %}
 </table>

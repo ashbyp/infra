@@ -12,13 +12,14 @@ from api.API import API
 class Team:
     name: str
     town: str
+    website: str
 
 
 @dataclass
-class Match:
+class Fixture:
     home_team: str
     away_team: str
-    fixture: datetime
+    dttm: datetime
 
 
 class FootballAPI(API):
@@ -43,7 +44,7 @@ class FootballAPI(API):
 
     def get_teams(self) -> list[Team]:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute("select name, town from teams")
+        cur.execute("select name, town, website from team")
         results = [Team(**r) for r in cur.fetchall()]
         cur.close()
         super().called()
@@ -51,25 +52,25 @@ class FootballAPI(API):
 
     def get_team(self, name: str) -> Team:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute(f"select name, town from teams where name = '{name}'")
+        cur.execute(f"select name, town, website from team where name = '{name}'")
         results = [Team(**r) for r in cur.fetchall()]
         cur.close()
         super().called()
         return results[0] if results else None
 
-    def get_matches(self) -> list[Match]:
+    def get_fixtures(self) -> list[Fixture]:
         cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
             """
             select h.name as home_team, 
                     a.name as away_team, 
-                    m.fixture_dt as fixture 
-            from matches m 
-            join teams h on h.id = m.home_team_fk 
-            join teams a on a.id = m.away_team_fk
+                    f.fixturedttm as dttm
+            from fixture f 
+            join team h on h.id = f.hometeam_fk 
+            join team a on a.id = f.awayteam_fk
             """)
 
-        results = [Match(**r) for r in cur.fetchall()]
+        results = [Fixture(**r) for r in cur.fetchall()]
         cur.close()
         super().called()
         return results
@@ -77,26 +78,26 @@ class FootballAPI(API):
     def create_team(self, team: Team) -> str:
         cur = self._con.cursor()
         try:
-            cur.execute(f"insert into teams(name, town) values('{team.name}','{team.town}')")
+            cur.execute(f"insert into team(name, town, website) values('{team.name}','{team.town}', '{team.website if team.website is not None else 'null'}')")
             self._con.commit()
-        except Exception as _:
-            return f'failed to add team {team}'
+        except Exception as e:
+            self._con.rollback()
+            return f'failed to add team {team} {e}'
         finally:
             cur.close()
-            self._con.rollback()
             super().called()
         return f'added team {team}'
 
     def update_team(self, team: Team) -> str:
         cur = self._con.cursor()
         try:
-            cur.execute(f"update teams set town = '{team.town}' where name = '{team.name}'");
+            cur.execute(f"update team set town = '{team.town}', website = '{team.website}' where name = '{team.name}'")
             self._con.commit()
-        except Exception as _:
-            return f'failed to update team {team}'
+        except Exception as e:
+            self._con.rollback()
+            return f'failed to update team {team} {e}'
         finally:
             cur.close()
-            self._con.rollback()
             super().called()
         return f'updated team {team}'
 
@@ -116,6 +117,5 @@ if __name__ == '__main__':
         s['pgsql-dev']['host'] = 'localhost'
 
     a = FootballAPI(s['pgsql-dev'])
-    # print(a.get_teams())
-    print(a.get_matches())
-
+    print(a.get_teams())
+    print(a.get_fixtures())

@@ -1,36 +1,36 @@
-DELETE FROM teams;
-DELETE FROM matches;
+DELETE FROM team;
+DELETE FROM fixture;
 
-INSERT INTO teams(name, town) VALUES('Fulham', 'London');
-INSERT INTO teams(name, town) VALUES('Manchester United', 'Manchester');
-INSERT INTO teams(name, town) VALUES('Arsenal', 'London');
-INSERT INTO teams(name, town) VALUES('Manchester City', 'Manchester');
-INSERT INTO teams(name, town) VALUES('Luton', 'Luton');
-INSERT INTO teams(name, town) VALUES('Everton', 'Liverpool');
-INSERT INTO teams(name, town) VALUES('Brentford', 'London');
-INSERT INTO teams(name, town) VALUES('Crystal Palace', 'London');
-INSERT INTO teams(name, town) VALUES('Chelsea', 'London');
-INSERT INTO teams(name, town) VALUES('Sheffield United', 'Sheffield');
-INSERT INTO teams(name, town) VALUES('Tottenham', 'London');
+INSERT INTO team(name, town, website) VALUES('Fulham', 'London', 'https://www.fulhamfc.com/');
+INSERT INTO team(name, town, website) VALUES('Manchester United', 'Manchester', NULL);
+INSERT INTO team(name, town, website) VALUES('Arsenal', 'London', NULL);
+INSERT INTO team(name, town, website) VALUES('Manchester City', 'Manchester', NULL);
+INSERT INTO team(name, town, website) VALUES('Luton', 'Luton', NULL);
+INSERT INTO team(name, town, website) VALUES('Everton', 'Liverpool', NULL);
+INSERT INTO team(name, town, website) VALUES('Brentford', 'London', NULL);
+INSERT INTO team(name, town, website) VALUES('Crystal Palace', 'London', NULL);
+INSERT INTO team(name, town, website) VALUES('Chelsea', 'London', NULL);
+INSERT INTO team(name, town, website) VALUES('Sheffield United', 'Sheffield', NULL);
+INSERT INTO team(name, town, website) VALUES('Tottenham', 'London', NULL);
 
 
-INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(
-    (SELECT id FROM teams WHERE name = 'Everton'),
-    (SELECT id FROM teams WHERE name = 'Fulham'),
+INSERT INTO fixture(hometeam_fk, awayteam_fk, fixturedttm) VALUES(
+    (SELECT id FROM team WHERE name = 'Everton'),
+    (SELECT id FROM team WHERE name = 'Fulham'),
     '2023-08-12 15:00:00');
-INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(
-    (SELECT id FROM teams WHERE name = 'Fulham'),
-    (SELECT id FROM teams WHERE name = 'Brentford'),
+INSERT INTO fixture(hometeam_fk, awayteam_fk, fixturedttm) VALUES(
+    (SELECT id FROM team WHERE name = 'Fulham'),
+    (SELECT id FROM team WHERE name = 'Brentford'),
     '2023-08-19 15:00:00');
- INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(
-    (SELECT id FROM teams WHERE name = 'Arsenal'),
-    (SELECT id FROM teams WHERE name = 'Fulham'),
+ INSERT INTO fixture(hometeam_fk, awayteam_fk, fixturedttm) VALUES(
+    (SELECT id FROM team WHERE name = 'Arsenal'),
+    (SELECT id FROM team WHERE name = 'Fulham'),
     '2023-08-26 15:00:00');
- INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(
-    (SELECT id FROM teams WHERE name = 'Manchester City'),
-    (SELECT id FROM teams WHERE name = 'Fulham'),
+ INSERT INTO fixture(hometeam_fk, awayteam_fk, fixturedttm) VALUES(
+    (SELECT id FROM team WHERE name = 'Manchester City'),
+    (SELECT id FROM team WHERE name = 'Fulham'),
     '2023-09-02 15:00:00');
- INSERT INTO matches(home_team_fk, away_team_fk, fixture_dt) VALUES(
-    (SELECT id FROM teams WHERE name = 'Fulham'),
-    (SELECT id FROM teams WHERE name = 'Luton'),
+ INSERT INTO fixture(hometeam_fk, awayteam_fk, fixturedttm) VALUES(
+    (SELECT id FROM team WHERE name = 'Fulham'),
+    (SELECT id FROM team WHERE name = 'Luton'),
     '2023-09-16 15:00:00');

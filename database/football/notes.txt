@@ -1,5 +1,0 @@
-\c database             # change database
-\du                     # list users of current database
-\conninfo               # connection info
-show data_directory;    # where is postgres putting it's data
-

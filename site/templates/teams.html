@@ -14,6 +14,8 @@
     <input type="text" id="team" name="team"><br><br>
     <label for="town">Town name:</label><br>
     <input type="text" id="town" name="town"><br><br>
+    <label for="town">Website:</label><br>
+    <input type="text" id="website" name="website"><br><br>
     <input class="submit" type="submit" value="Submit">
 </form>
 <hr>
@@ -24,11 +26,17 @@
     <tr>
         <th>Team</th>
         <th>Town</th>
+        <th>Website</th>
     </tr>
     {% for team in teams %}
     <tr>
         <td>{{team.name}}</td>
         <td>{{team.town}}</td>
+        {% if team.website %}
+            <td><a href="{{team.website}}">{{team.website}}</a></td>
+        {% else %}
+            <td>Not set</td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
