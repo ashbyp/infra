@@ -189,8 +189,9 @@ class FootballAPI(API):
             query = """
             update fixture set fixturedttm = %s
             from fixture f
-            join team h on h.name = %s
-            join team a on a.name = %s
+            join team h on h.id = f.hometeam_fk
+            join team a on a.id = f.awayteam_fk
+            where h.name = %s and a.name = %s
             """
             cur.execute(query, (fixture.dttm, fixture.home_team, fixture.away_team))
             self._con.commit()
