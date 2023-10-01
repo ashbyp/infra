@@ -5,13 +5,14 @@ import yaml
 from typing import Any, Annotated
 from dataclasses import asdict
 
-from fastapi import FastAPI, Request, Response, Form
+from fastapi import FastAPI, Request, Response, Form, Body
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from api import football, system, stash
 from api.API import API
+from utils import dttmutils
 
 #########################
 # Startup
@@ -63,7 +64,7 @@ def system_api() -> system.SystemAPI:
 #########################
 
 @app.get("/")
-def home(request: Request) -> Response:
+def index(request: Request) -> Response:
     data = {
         'request': request,
         'routes': [{"path": route.path, "name": route.name} for route in request.app.routes]
@@ -96,11 +97,7 @@ def teams(request: Request) -> Response:
 
 @app.get("/fixtures", response_class=HTMLResponse)
 def fixtures(request: Request) -> Response:
-    data = {
-        'request': request,
-        'fixtures': [asdict(t) for t in football_api().get_fixtures()]
-    }
-    return templates.TemplateResponse('fixtures.html', data)
+    return _render_fixtures_page(request, "OK")
 
 
 @app.get("/data/teams", response_model=list[football.Team])
@@ -134,6 +131,25 @@ def delete_team(request: Request, name: str) -> Response:
     return _render_teams_page(request, message)
 
 
+@app.get("/delete-fixture/{home}/{away}", response_class=HTMLResponse)
+def delete_fixture(request: Request, home: str, away: str) -> Response:
+    message = football_api().delete_fixture(home, away)
+    return _render_fixtures_page(request, message)
+
+
+@app.post("/create-fixture/", response_class=HTMLResponse)
+def create_fixture(request: Request, home: Annotated[str, Form()], away: Annotated[str, Form()],
+                   dttmstr: Annotated[str, Form()]) -> Response:
+    if not all([home, away, dttmstr]):
+        message = f"Missing fixture details {home} {away} {dttmstr}"
+    elif home == away:
+        message = f'{home} cannot play themselves'
+    else:
+        message = football_api().create_or_update_fixture(
+            football.Fixture(home, away, dttmutils.to_dttm_no_minutes(dttmstr)))
+    return _render_fixtures_page(request, message)
+
+
 def _render_teams_page(request: Request, message: str) -> Response:
     data = {
         'request': request,
@@ -141,3 +157,14 @@ def _render_teams_page(request: Request, message: str) -> Response:
         'teams': [asdict(t) for t in football_api().get_teams()]
     }
     return templates.TemplateResponse('teams.html', data)
+
+
+def _render_fixtures_page(request: Request, message: str) -> Response:
+    data = {
+        'request': request,
+        'message': message,
+        'fixtures': [asdict(t) for t in football_api().get_fixtures()],
+        'teams': [t.name for t in sorted(football_api().get_teams())],
+        'next_saturday': dttmutils.format_dttm_no_minutes(dttmutils.next_saturday_at_3pm())
+    }
+    return templates.TemplateResponse('fixtures.html', data)

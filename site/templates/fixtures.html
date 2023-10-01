@@ -2,11 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Matches</title>
+    <title>Fixtures</title>
     <link href="{{ url_for('static', path='/table.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="http://www.webdevjeffus.com/drop-in-css/drop-in-gp.css">
+    <link href="{{ url_for('static', path='/site.css') }}" rel="stylesheet">
 </head>
 <body>
-<h2>Matches</h2>
+<p><a href="teams">teams</a> | <a href="fixtures">fixtures</a></p>
+<h1>Enter a fixture</h1>
+<form method="post" action="/create-fixture">
+    <table>
+        <tr>
+            <td><label for="home">Home team:</label></td>
+            <td><label for="away">Away team:</label></td>
+        </tr>
+        <tr>
+            <td><select id="home" name="home">
+                {% for team in teams %}
+                <option value="{{team}}">{{team}}</option>
+                {% endfor %}
+            </select></td>
+            <td><select id="away" name="away">
+                {% for team in teams %}
+                <option value="{{team}}">{{team}}</option>
+                {% endfor %}
+            </select></td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td><label for="dttmstr">Date/time:</label><br></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="datetime-local" id="dttmstr" name="dttmstr" value="{{next_saturday}}"/>
+            </td>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td><input class="submit" type="submit" value="Submit"></td>
+        </tr>
+    </table>
+</form>
+<hr>
+<h3>Status: {{message if message else "OK"}}</h3>
+<hr>
+<h2>Current Fixtures</h2>
 <table class="styled-table">
     <tr>
         <th>Home</th>
@@ -18,6 +61,9 @@
         <td>{{fixture.home_team}}</td>
         <td>{{fixture.away_team}}</td>
         <td>{{fixture.dttm}}</td>
+        <td>
+            <button onclick="location.href='/delete-fixture/{{fixture.home_team}}/{{fixture.away_team}}'" type="button">Delete</button>
+        </td>
     </tr>
     {% endfor %}
 </table>
