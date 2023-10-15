@@ -154,7 +154,7 @@ def _render_teams_page(request: Request, message: str) -> Response:
     data = {
         'request': request,
         'message': message,
-        'teams': [asdict(t) for t in football_api().get_teams()]
+        'teams': [asdict(t) for t in sorted(football_api().get_teams())]
     }
     return templates.TemplateResponse('teams.html', data)
 

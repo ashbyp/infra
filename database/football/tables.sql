@@ -1,22 +1,51 @@
-CREATE TABLE IF NOT EXISTS team (
-    id serial PRIMARY KEY,
-    name VARCHAR(256) UNIQUE UNIQUE NOT NULL,
-    town VARCHAR(256) NOT NULL,
-    website VARCHAR(256) NULL,
-    createddttm TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-CREATE UNIQUE INDEX idx_unique_name ON team (name);
-
-
-CREATE TABLE IF NOT EXISTS fixture (
-    id serial PRIMARY KEY,
-    hometeam_fk INTEGER REFERENCES team(id) NOT NULL,
-    awayteam_fk INTEGER REFERENCES team(id) NOT NULL,
-    fixturedttm TIMESTAMP,
-    createddttm TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+create table if not exists team (
+    id serial primary key,
+    name varchar(256) unique not null,
+    town varchar(256) not null,
+    website varchar(256) null,
+    createddttm timestamp with time zone default current_timestamp
 );
 
+create table if not exists fixture (
+    id serial primary key,
+    hometeam_fk integer references team(id) not null,
+    awayteam_fk integer references team(id) not null,
+    fixturedttm timestamp,
+    createddttm timestamp with time zone default current_timestamp
+);
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO guest;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO guest;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO guest;
+create table if not exists competition (
+    id serial primary key,
+    name varchar(256) unique not null,
+    country varchar(256) not null,
+    createddttm timestamp with time zone default current_timestamp
+);
+
+create table if not exists season (
+    id serial primary key,
+    name varchar(256) unique not null,
+    competition_fk integer references competition(id) not null,
+    firstfixturedt date not null,
+    lastfixturedt date not null,
+    createddttm timestamp with time zone default current_timestamp
+);
+
+create table if not exists division (
+    id serial primary key,
+    name varchar(256) unique not null,
+    season_fk integer references season(id) not null,
+    rank integer not null,
+    createddttm timestamp with time zone default current_timestamp
+);
+
+create table if not exists team_division (
+    team_fk integer references team(id) not null,
+    division_fk integer references division(id) not null,
+    fromdt date not null,
+    todt date not null,
+    createddttm timestamp with time zone default current_timestamp
+ );
+
+grant all privileges on all tables in schema public to guest;
+grant all privileges on all sequences in schema public to guest;
+grant all privileges on all functions in schema public to guest;
