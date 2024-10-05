@@ -10,7 +10,7 @@ services:
       - .:/app
 
   db:
-    image: postgres:latest
+    image: postgres:15
     container_name: pgsql-dev
     restart: always
     environment:
