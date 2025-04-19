@@ -26,3 +26,6 @@ docker run --name pgsql-dev -d -e POSTGRES_PASSWORD=guest -p 5432:5432 -v pgdata
 docker exec -it pgsql-dev bash
     psql -h localhost -U postgres               # postgres super user
     psql -h localhost -U guest -d football      # app user
+
+# doom
+docker run --rm -it --shm-size=512m -p 6901:6901 -e VNC_PW=password kasmweb/doom:1.16.0
