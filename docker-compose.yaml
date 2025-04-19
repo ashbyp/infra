@@ -27,3 +27,10 @@ services:
     ports:
       - 6379:6379
 
+  nginx:
+    image: nginx
+    container_name: nginx-dev
+    restart: always
+    ports:
+      - 8081:80
+
